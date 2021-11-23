@@ -112,7 +112,7 @@ snap_check_jakarta_svcs()
 
 get_snap_svc_status()
 {
-    case "$1" in 
+    case "$1" in
         "status")
             svcStatus="$(snap services edgexfoundry.$1 | grep $1 | awk '{print $3}')"
             ;;
@@ -131,26 +131,57 @@ snap_remove()
 # to accomodate time for everything to come online
 snap_wait_all_services_online()
 {
-    while 
-        [ "$(curl --insecure --silent --include \
+    regex="4[0-9][0-9]|5[0-9][0-9]"
+    all_services_online=false
+    i=0
+
+    while [ "$all_services_online" = "false" ];
+    do
+        #max retry avoids forever waiting
+        ((i=i+1))
+        if [ "$i" -ge 300 ]; then
+            echo "services timed out, reached max retry count of 300"
+            exit 1
+        fi
+
+        #dial services
+        core_data_status_code=$(curl --insecure --silent --include \
+            --connect-timeout 2 --max-time 300 \
             --output /dev/null --write-out "%{http_code}" \
             -X GET 'http://localhost:59880/api/v2/ping' \
-            -H 'accept: application/json')" != 200 ] \
-        || [ "$(curl --insecure --silent --include \
+            -H 'accept: application/json') || true
+        core_metadata_status_code=$(curl --insecure --silent --include \
+            --connect-timeout 2 --max-time 300 \
             --output /dev/null --write-out "%{http_code}" \
             -X GET 'http://localhost:59881/api/v2/ping' \
-            -H 'accept: application/json')" != 200 ] \
-        || [ "$(curl --insecure --silent --include \
+            -H 'accept: application/json') || true
+        core_command_status_code=$(curl --insecure --silent --include \
+            --connect-timeout 2 --max-time 300 \
             --output /dev/null --write-out "%{http_code}" \
             -X GET 'http://localhost:59882/api/v2/ping' \
-            -H 'accept: application/json')" != 200 ] \
-        || [ -z "$(lsof -i -P -n | grep 8000)" ] \
-        || [ -z "$(lsof -i -P -n | grep 8200)" ] \
-        || [ -z "$(lsof -i -P -n | grep 8500)" ] \
-        || [ -z "$(lsof -i -P -n | grep 5432)" ] \
-        || [ -z "$(lsof -i -P -n | grep 6379)" ];
-    do
-        sleep 1
+            -H 'accept: application/json') || true
+
+        #error status 4xx/5xx will fail the test immediately
+        if [[ $core_data_status_code =~ $regex ]] \
+            || [[ $core_metadata_status_code =~ $regex ]] \
+            || [[ $core_command_status_code =~ $regex ]]; then
+            echo "core service(s) received status code 4xx or 5xx"
+            exit 1
+        fi
+
+        if [[ "$core_data_status_code" == 200 ]] \
+            && [[ "$core_metadata_status_code" == 200 ]] \
+            && [[ "$core_command_status_code" == 200 ]] \
+            && [ -n "$(lsof -i -P -n -S 2 | grep 8000)" ] \
+            && [ -n "$(lsof -i -P -n -S 2 | grep 8200)" ] \
+            && [ -n "$(lsof -i -P -n -S 2 | grep 8500)" ] \
+            && [ -n "$(lsof -i -P -n -S 2 | grep 5432)" ] \
+            && [ -n "$(lsof -i -P -n -S 2 | grep 6379)" ]; then
+            all_services_online=true
+            echo "all services up"
+        else
+            sleep 1
+        fi
     done
 }
 
@@ -158,16 +189,32 @@ snap_wait_port_status()
 {
     local port=$1
     local port_status=$2
-    if [ "$port_status" = "open" ]; then
-            while [ -z "$(lsof -i -P -n | grep "$port")" ]; 
+    i=0
+
+    if [ "$port_status" == "open" ]; then
+            while [ -z "$(lsof -i -P -n -S 2 | grep "$port")" ];
             do
-                sleep 1
+                #max retry avoids forever waiting
+                ((i=i+1))
+                if [ "$i" -ge 300 ]; then
+                    echo "services timed out, reached max retry count of 300"
+                    exit 1
+                else
+                    sleep 1
+                fi
             done
     else
-        if [ "$port_status" = "close" ]; then
-            while [ -n "$(lsof -i -P -n | grep "$port")" ]; 
+        if [ "$port_status" == "close" ]; then
+            while [ -n "$(lsof -i -P -n -S 2 | grep "$port")" ];
             do
-                sleep 1
+                #max retry avoids forever waiting
+                ((i=i+1))
+                if [ "$i" -ge 300 ]; then
+                    echo "services timed out, reached max retry count of 300"
+                    exit 1
+                else
+                    sleep 1
+                fi
             done
         fi
     fi
