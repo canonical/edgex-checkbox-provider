@@ -6,7 +6,7 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
 
 # load the utils
 # shellcheck source=/dev/null
-source "$SCRIPT_DIR/utils.sh"
+source "$(dirname "$SCRIPT_DIR")/utils.sh"
 
 snap_remove
 

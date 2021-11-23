@@ -60,7 +60,7 @@ conf_to_env[messagequeue_publish-topic-prefix]="MESSAGEQUEUE_PUBLISHTOPICPREFIX/
 
 # load the utils
 # shellcheck source=/dev/null
-source "$SCRIPT_DIR/utils.sh"
+source "$(dirname "$SCRIPT_DIR")/utils.sh"
 
 DEFAULT_TEST_CHANNEL=${DEFAULT_TEST_CHANNEL:-beta}
 

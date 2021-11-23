@@ -11,7 +11,7 @@ fi
 
 # load the utils
 # shellcheck source=/dev/null
-source "$SCRIPT_DIR/utils.sh"
+source "$(dirname "$SCRIPT_DIR")/utils.sh"
 
 # helper function to download the snap, ack the assertion and return the
 # name of the file
