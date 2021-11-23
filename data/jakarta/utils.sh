@@ -126,3 +126,50 @@ snap_remove()
     snap remove edgexfoundry || true
 }
 
+# wait for services to come online
+# NOTE: this may have to be significantly increased on arm64 or low RAM platforms
+# to accomodate time for everything to come online
+snap_wait_all_services_online()
+{
+    while 
+        [ "$(curl --insecure --silent --include \
+            --output /dev/null --write-out "%{http_code}" \
+            -X GET 'http://localhost:59880/api/v2/ping' \
+            -H 'accept: application/json')" != 200 ] \
+        || [ "$(curl --insecure --silent --include \
+            --output /dev/null --write-out "%{http_code}" \
+            -X GET 'http://localhost:59881/api/v2/ping' \
+            -H 'accept: application/json')" != 200 ] \
+        || [ "$(curl --insecure --silent --include \
+            --output /dev/null --write-out "%{http_code}" \
+            -X GET 'http://localhost:59882/api/v2/ping' \
+            -H 'accept: application/json')" != 200 ] \
+        || [ -z "$(lsof -i -P -n | grep 8000)" ] \
+        || [ -z "$(lsof -i -P -n | grep 8200)" ] \
+        || [ -z "$(lsof -i -P -n | grep 8500)" ] \
+        || [ -z "$(lsof -i -P -n | grep 5432)" ] \
+        || [ -z "$(lsof -i -P -n | grep 6379)" ];
+    do
+        sleep 1
+    done
+}
+
+snap_wait_port_status()
+{
+    local port=$1
+    local port_status=$2
+    if [ "$port_status" = "open" ]; then
+            while [ -z "$(lsof -i -P -n | grep "$port")" ]; 
+            do
+                sleep 1
+            done
+    else
+        if [ "$port_status" = "close" ]; then
+            while [ -n "$(lsof -i -P -n | grep "$port")" ]; 
+            do
+                sleep 1
+            done
+        fi
+    fi
+}
+
