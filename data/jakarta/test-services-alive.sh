@@ -25,7 +25,7 @@ fi
 sleep 120
 
 # check services
-snap_check_jakarta_svcs
+snap_check_svcs
 
 # remove the snap to run the next test
 snap_remove

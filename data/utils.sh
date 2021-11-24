@@ -49,7 +49,7 @@ snap_refresh()
     fi
 }
 
-snap_check_jakarta_svcs()
+snap_check_svcs()
 {
     if [ "$1" = "--notfatal" ]; then
         FATAL=0

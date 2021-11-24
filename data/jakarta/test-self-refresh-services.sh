@@ -42,7 +42,7 @@ fi
 # to accomodate time for everything to come online
 sleep 120
 
-snap_check_jakarta_svcs
+snap_check_svcs
 
 # ensure the release config item is set to jakarta
 snapRelease=$(snap get edgexfoundry release)

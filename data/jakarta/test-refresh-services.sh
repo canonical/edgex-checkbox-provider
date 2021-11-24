@@ -41,7 +41,7 @@ for channel in edge; do
     # NOTE: this may have to be significantly increased on arm64 or low RAM platforms
     # to accomodate time for everything to come online
     sleep 120
-    snap_check_jakarta_svcs
+    snap_check_svcs
 
     # now install the snap version we are testing and check again
     if [ -n "$REVISION_TO_TEST" ]; then
@@ -54,7 +54,7 @@ for channel in edge; do
     # to accomodate time for everything to come online
     sleep 120
 
-    snap_check_jakarta_svcs --notfatal
+    snap_check_svcs --notfatal
 
     # remove the snap to run the next channel upgrade
     snap_remove
