@@ -4,9 +4,13 @@
 # snippet from https://stackoverflow.com/a/246128/10102404
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
 
-# load the utils
+# load the generic utils
 # shellcheck source=/dev/null
 source "$(dirname "$SCRIPT_DIR")/utils.sh"
+
+# load the jakarta release utils
+# shellcheck source=/dev/null
+source "$SCRIPT_DIR/utils.sh"
 
 # remove the snap if it's already installed
 DEFAULT_TEST_CHANNEL=${DEFAULT_TEST_CHANNEL:-beta}

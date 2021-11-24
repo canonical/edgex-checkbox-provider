@@ -49,19 +49,9 @@ snap_refresh()
     fi
 }
 
-snap_check_svcs()
+check_enabled_services()
 {
-    if [ "$1" = "--notfatal" ]; then
-        FATAL=0
-    else
-        FATAL=1
-    fi
-    # group services by status
-
-    # enabled services
-    # all the core-* services, security-services, consul, and redis
-    for svc in consul core-command core-data core-metadata kong-daemon redis postgres security-proxy-setup \
-	security-secretstore-setup security-bootstrapper-redis security-consul-bootstrapper vault; do
+    for svc in $1; do
         svcStatus="$(snap services edgexfoundry.$svc | grep $svc | awk '{print $2}')"
         if [ "enabled" != "$svcStatus" ]; then
             echo "service $svc has status \"$svcStatus\" but should be enabled"
@@ -70,10 +60,13 @@ snap_check_svcs()
             fi
         fi
     done
+}
 
-    # active services
-    # same as enabled, but without security-*-setup as those are all oneshot daemons
-    for svc in consul core-command core-data core-metadata kong-daemon redis postgres vault; do
+# all the core-* services, security-services, consul, and redis
+# except security-*-setup as those are all oneshot daemons
+check_active_services()
+{
+    for svc in $1; do
         svcStatus="$(snap services edgexfoundry.$svc | grep $svc | awk '{print $3}')"
         if [ "active" != "$svcStatus" ]; then
             echo "service $svc has status \"$svcStatus\" but should be active"
@@ -82,9 +75,11 @@ snap_check_svcs()
             fi
         fi
     done
+}
 
-    # disabled services
-    for svc in app-service-configurable device-virtual kuiper support-notifications support-scheduler sys-mgmt-agent; do
+check_disabled_services()
+{
+    for svc in $1; do
         svcStatus="$(snap services edgexfoundry.$svc | grep $svc | awk '{print $2}')"
         if [ "disabled" != "$svcStatus" ]; then
             echo "service $svc has status \"$svcStatus\" but should be disabled"
@@ -93,13 +88,12 @@ snap_check_svcs()
             fi
         fi
     done
+}
 
-    # inactive services
-    # all the disabled services + the oneshot daemons
-
-    for svc in app-service-configurable device-virtual kuiper security-bootstrapper-redis \
-	security-consul-bootstrapper security-proxy-setup security-secretstore-setup \
-        support-notifications support-scheduler sys-mgmt-agent; do
+# all the disabled services + the oneshot daemons
+check_inactive_services()
+{
+    for svc in $1; do
         svcStatus="$(snap services edgexfoundry.$svc | grep $svc | awk '{print $3}')"
         if [ "inactive" != "$svcStatus" ]; then
             echo "service $svc has status \"$svcStatus\" but should be inactive"
