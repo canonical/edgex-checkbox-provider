@@ -9,9 +9,9 @@ if [ "$(id -u)" != "0" ]; then
     exit 1
 fi
 
-# load the generic utils
+# load the jakarta release utils
 # shellcheck source=/dev/null
-source "$(dirname "$SCRIPT_DIR")/utils.sh"
+source "$SCRIPT_DIR/utils.sh"
 
 # helper function to download the snap, ack the assertion and return the
 # name of the file
