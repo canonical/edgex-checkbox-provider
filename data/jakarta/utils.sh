@@ -15,57 +15,60 @@ source "$(dirname "$SCRIPT_DIR")/utils.sh"
 
 snap_check_svcs()
 {
-    if [ "$1" = "--notfatal" ]; then
-        FATAL=0
-    else
-        FATAL=1
-    fi
-
     # group services by status
 
-    check_enabled_services \
-        `#core services` \
-        "redis \
-        core-data \
-        core-command \
-        core-metadata \
-        `#security services` \
-        kong-daemon postgres vault consul 
-        `#one-shot security services` \
-        security-proxy-setup \
-        security-secretstore-setup \
-        security-bootstrapper-redis \
-        security-consul-bootstrapper "
+    declare -a arr_enabled_services=(
+        # core services 
+        "redis" 
+        "core-data"
+        "core-command"
+        "core-metadata"
+        # security services
+        "kong-daemon" "postgres" "vault" "consul" 
+        # one-shot security services
+        "security-proxy-setup"
+        "security-secretstore-setup"
+        "security-bootstrapper-redis"
+        "security-consul-bootstrapper") 
 
-    check_active_services \
-        `#core services` \
-        "redis \
-        core-data \
-        core-command \
-        core-metadata \
-        `#security services` \
-        kong-daemon postgres vault consul"
+    declare -a arr_active_services=(
+        # core services 
+        "redis" 
+        "core-data"
+        "core-command"
+        "core-metadata"
+        # security services
+        "kong-daemon" "postgres" "vault" "consul")
 
-    check_disabled_services \
-        `#app service, kuiper and device-virtual`\
-        "app-service-configurable kuiper device-virtual \
-        `#support services, system service` \
-        support-notifications \
-        support-scheduler \
-        sys-mgmt-agent"
+    declare -a arr_disabled_services=(
+        # app service, kuiper and device-virtual
+        "kuiper" 
+        "app-service-configurable"
+        "device-virtual"
+        # support services, system service
+        "support-notifications"
+        "support-scheduler"
+        "sys-mgmt-agent")
 
-    check_inactive_services \
-        `#app service, kuiper and device-virtual `\
-        "app-service-configurable kuiper device-virtual \
-        `#one-shot security services` \
-        security-proxy-setup \
-        security-secretstore-setup \
-        security-bootstrapper-redis \
-        security-consul-bootstrapper \
-        `#support services, system service` \
-        support-notifications \
-        support-scheduler \
-        sys-mgmt-agent"    
+    declare -a arr_inactive_services=(
+        # app service, kuiper and device-virtual
+        "kuiper" 
+        "app-service-configurable"
+        "device-virtual"
+        # one-shot security services
+        "security-proxy-setup"
+        "security-secretstore-setup"
+        "security-bootstrapper-redis"
+        "security-consul-bootstrapper"
+        # support services, system service
+        "support-notifications"
+        "support-scheduler"
+        "sys-mgmt-agent")
+
+    check_enabled_services "${arr_enabled_services[@]}"
+    check_active_services "${arr_active_services[@]}"
+    check_disabled_services "${arr_disabled_services[@]}"
+    check_inactive_services "${arr_inactive_services[@]}"
 }
 
 # wait for services to come online

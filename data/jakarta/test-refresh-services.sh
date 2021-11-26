@@ -39,6 +39,7 @@ for channel in edge; do
     esac
     # wait for services to come online
     snap_wait_all_services_online
+
     snap_check_svcs
 
     # now install the snap version we are testing and check again
@@ -50,7 +51,7 @@ for channel in edge; do
     # wait for services to come online
     snap_wait_all_services_online
 
-    snap_check_svcs --notfatal
+    snap_check_svcs
 
     # remove the snap to run the next channel upgrade
     snap_remove

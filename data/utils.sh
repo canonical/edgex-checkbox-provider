@@ -55,24 +55,18 @@ check_enabled_services()
         svcStatus="$(snap services edgexfoundry.$svc | grep $svc | awk '{print $2}')"
         if [ "enabled" != "$svcStatus" ]; then
             echo "service $svc has status \"$svcStatus\" but should be enabled"
-            if [ "$FATAL" = "1" ]; then
-                exit 1
-            fi
+            exit 1
         fi
     done
 }
 
-# all the core-* services, security-services, consul, and redis
-# except security-*-setup as those are all oneshot daemons
 check_active_services()
 {
     for svc in $1; do
         svcStatus="$(snap services edgexfoundry.$svc | grep $svc | awk '{print $3}')"
         if [ "active" != "$svcStatus" ]; then
             echo "service $svc has status \"$svcStatus\" but should be active"
-            if [ "$FATAL" = "1" ]; then
-                exit 1
-            fi
+            exit 1
         fi
     done
 }
@@ -83,23 +77,18 @@ check_disabled_services()
         svcStatus="$(snap services edgexfoundry.$svc | grep $svc | awk '{print $2}')"
         if [ "disabled" != "$svcStatus" ]; then
             echo "service $svc has status \"$svcStatus\" but should be disabled"
-            if [ "$FATAL" = "1" ]; then
-                exit 1
-            fi
+            exit 1
         fi
     done
 }
 
-# all the disabled services + the oneshot daemons
 check_inactive_services()
 {
     for svc in $1; do
         svcStatus="$(snap services edgexfoundry.$svc | grep $svc | awk '{print $3}')"
         if [ "inactive" != "$svcStatus" ]; then
             echo "service $svc has status \"$svcStatus\" but should be inactive"
-            if [ "$FATAL" = "1" ]; then
-                exit 1
-            fi
+            exit 1
         fi
     done
 }
