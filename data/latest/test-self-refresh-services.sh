@@ -62,5 +62,6 @@ if [ ! -f "$KONG_ADMIN_JWT" ]; then
     snap_remove
     exit 1
 fi
-snap_remove
 
+# remove the snap for the next test
+snap_remove
