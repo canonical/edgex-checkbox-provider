@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This project contains the checkbox tests of the [edgex foundry](https://docs.edgexfoundry.org/) snaps. 
+This project contains the checkbox tests of the [Edgex Foundry](https://docs.edgexfoundry.org/) snaps.
 [Checkbox](https://checkbox.readthedocs.io/en/latest/) is a test automation software performed by the Canonical certification team. 
 The [upstream repository](/../../) is hosted on Github; 
 The tests run via the [Launchpad mirror](https://code.launchpad.net/checkbox-provider-edgex).
