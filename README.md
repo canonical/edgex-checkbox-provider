@@ -94,5 +94,3 @@ sudo ./run-all-tests-locally.sh -h
 - The current tests plan only covers [edgexfoundry snap](https://github.com/edgexfoundry/edgex-go/tree/main/snap), it does not cover [device services snaps](https://github.com/edgexfoundry/edgex-docs/blob/main/docs_src/getting-started/Ch-GettingStartedSnapUsers.md#device-service-snaps) and [app services snap](https://github.com/edgexfoundry/app-service-configurable/tree/main/snap)
 - edgex-secretstore-token content interface is not be covered by tests
 
-## License
-[Apache-2.0](LICENSE)
