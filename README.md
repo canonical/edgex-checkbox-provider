@@ -1,6 +1,5 @@
 # edgex-checkbox-provider
 
-## Introduction
 
 This project contains the checkbox tests of the [Edgex Foundry](https://docs.edgexfoundry.org/) snaps.
 [Checkbox](https://checkbox.readthedocs.io/en/latest/) is a test automation software performed by the Canonical certification team. 
@@ -39,7 +38,7 @@ Remove these snaps to avoid missing edgex-secretstore-token issue, if applicable
 snap remove --purge <edgex-device-service>
 snap remove --purge <edgex-app-service>
 ```
-Get the edgex-checkbox-provider:
+Enter the desired test directory:
 ```bash
 cd edgex-checkbox-provider/data/jakarta
 ```
@@ -88,9 +87,9 @@ sudo ./run-all-tests-locally.sh -h
 - Test that the system management agent works with the snap
 - Test that services are not listening on external network interfaces
 - Test that the rules engine works with the snap
-- Mandatory tests: interface, meminfo, connections ,[etc](./units/test-plan.pxu#L113).
+- Mandatory tests: see [units/test-plan.pxu#L113](./units/test-plan.pxu#L113)
 
 ## Limitations
-- The current tests plan only covers [edgexfoundry snap](https://github.com/edgexfoundry/edgex-go/tree/main/snap), it does not cover [device services snaps](https://github.com/edgexfoundry/edgex-docs/blob/main/docs_src/getting-started/Ch-GettingStartedSnapUsers.md#device-service-snaps) and [app services snap](https://github.com/edgexfoundry/app-service-configurable/tree/main/snap)
+- The current tests plan only covers the [edgexfoundry](https://snapcraft.io/edgexfoundry) snap. It does not cover any of the device or app service snaps.
 - edgex-secretstore-token content interface is not be covered by tests
 
