@@ -27,16 +27,16 @@ snap_download_and_ack()
 
 snap_download_stable_and_latest()
 {
-    # download and ack the ireland and jakarta (current latest/beta) channels as we have tests to ensure
+    # download and ack the 2.1/stable(aka Jakarta) and latest/beta channels as we have tests to ensure
     # there's a smooth upgrade between those channels and this one that is
     # under consideration
     # this also saves in download bandwidth and time
-    EDGEX_IRELAND_SNAP_FILE=$(snap_download_and_ack edgexfoundry --channel=2.0/stable)
-    EDGEX_JAKARTA_SNAP_FILE=$(snap_download_and_ack edgexfoundry --channel=latest/beta)
+    EDGEX_JAKARTA_SNAP_FILE=$(snap_download_and_ack edgexfoundry --channel=2.1/stable)
+    EDGEX_LATEST_SNAP_FILE=$(snap_download_and_ack edgexfoundry --channel=latest/beta)
 
-    # export the names of the ireland and jakarta snap files
-    export EDGEX_IRELAND_SNAP_FILE
+    # export the names of the jakarta and latest snap files
     export EDGEX_JAKARTA_SNAP_FILE
+    export EDGEX_LATEST_SNAP_FILE
 }
 
 # parse arguments - adapted from https://stackoverflow.com/a/14203146/10102404
