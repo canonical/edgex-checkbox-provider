@@ -7,7 +7,7 @@ This project contains the checkbox tests of the [Edgex Foundry](https://docs.edg
 The [upstream repository](/../../) is hosted on Github; 
 The tests run via the [Launchpad mirror](https://code.launchpad.net/checkbox-provider-edgex).
 
-When edgexfoundry snap is released to the latest/beta channel, the corresponding checkbox test will be triggered. 
+When edgexfoundry snap is released to a $TRACK/beta channel, the corresponding checkbox test will be triggered. 
 
 ## Usage
 ### Run tests using checkbox-edgexfoundry snap in isolation (recommend)
