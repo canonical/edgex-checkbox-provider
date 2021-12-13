@@ -150,7 +150,7 @@ snap_wait_port_status()
 
 print_snap_version()
 {
-    local snap=$1
-    snap list edgexfoundry | sed -n 2p
+    local snap_name=$1
+    snap list $snap_name | sed -n 2p
 }
 
