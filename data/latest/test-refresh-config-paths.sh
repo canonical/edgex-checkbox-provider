@@ -61,7 +61,7 @@ if [ -n "$notUpgradedFiles" ]; then
     echo "$notUpgradedFiles"
     exit 1
 else
-    echo "No files reference previous snap revision found"
+    echo "All config file use the current revision path."
 fi
 set -e
 
