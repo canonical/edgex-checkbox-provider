@@ -15,9 +15,9 @@ EDGEX_STABLE_CHANNEL="2.0/stable"
 
 snap_remove
 
-if [ -n "$EDGEX_IRELAND_SNAP_FILE" ]; then
+if [ -n "$EDGEX_PREV_STABLE_SNAP_FILE" ]; then
     echo "Installing snap from locally cached version"
-    snap_install "$EDGEX_IRELAND_SNAP_FILE"
+    snap_install "$EDGEX_PREV_STABLE_SNAP_FILE"
 else
     echo "Installing snap from channel"
     snap_install edgexfoundry $EDGEX_STABLE_CHANNEL

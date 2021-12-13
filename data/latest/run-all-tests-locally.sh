@@ -122,8 +122,8 @@ if [ -n "$SINGLE_TEST" ]; then
     fi
 
     if [ "$SINGLE_TEST" == "test-refresh-config-paths.sh" ]; then
-        EDGEX_IRELAND_SNAP_FILE=$(snap_download_and_ack edgexfoundry --channel=2.0/stable)
-        export EDGEX_IRELAND_SNAP_FILE
+        EDGEX_PREV_STABLE_SNAP_FILE=$(snap_download_and_ack edgexfoundry --channel=2.0/stable)
+        export EDGEX_PREV_STABLE_SNAP_FILE
         snap_download_stable_and_latest
     fi
 
