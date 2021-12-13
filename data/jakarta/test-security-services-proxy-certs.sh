@@ -69,11 +69,10 @@ snap set edgexfoundry env.security-proxy.user=user01,USER_ID,ES256
 echo "Setting security-proxy public key"
 snap set edgexfoundry env.security-proxy.public-key="$PUBLIC_KEY"
 
-# generate JWT Token
 echo "Generating JWT"
 # this command doesn't write errors to stderr. Check the exit code before using the output:
-gen_jwt_cmd="edgexfoundry.secrets-config proxy jwt --algorithm ES256 --private_key private.pem --id USER_ID --expiration=1h"
-if ! OUT=$(eval $gen_jwt_cmd); then
+if ! OUT=$(edgexfoundry.secrets-config proxy jwt --algorithm ES256 --private_key private.pem --id USER_ID --expiration=1h)
+then
     >&2 echo $OUT
     exit 1
 fi
