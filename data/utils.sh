@@ -148,3 +148,9 @@ snap_wait_port_status()
     fi
 }
 
+print_snap_version()
+{
+    local snap=$1
+    snap list edgexfoundry | sed -n 2p
+}
+

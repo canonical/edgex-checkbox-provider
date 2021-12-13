@@ -13,6 +13,10 @@ fi
 # shellcheck source=/dev/null
 source "$SCRIPT_DIR/utils.sh"
 
+EDGEX_STABLE_CHANNEL="2.1/stable"
+EDGEX_LATEST_CHANNEL="latest/beta"
+
+
 # helper function to download the snap, ack the assertion and return the
 # name of the file
 snap_download_and_ack()
@@ -27,15 +31,16 @@ snap_download_and_ack()
 
 snap_download_stable_and_latest()
 {
-    # download and ack the 2.1/stable(aka Jakarta) and latest/beta channels as we have tests to ensure
+    # download and ack the stable and latest channels as we have tests to ensure
     # there's a smooth upgrade between those channels and this one that is
     # under consideration
     # this also saves in download bandwidth and time
-    EDGEX_JAKARTA_SNAP_FILE=$(snap_download_and_ack edgexfoundry --channel=2.1/stable)
-    EDGEX_LATEST_SNAP_FILE=$(snap_download_and_ack edgexfoundry --channel=latest/beta)
+    EDGEX_STABLE_SNAP_FILE=$(snap_download_and_ack edgexfoundry --channel=$EDGEX_STABLE_CHANNEL)
+    EDGEX_LATEST_SNAP_FILE=$(snap_download_and_ack edgexfoundry --channel=$EDGEX_LATEST_CHANNEL)
 
-    # export the names of the jakarta and latest snap files
-    export EDGEX_JAKARTA_SNAP_FILE
+
+    # export the names of the stable and latest snap files
+    export EDGEX_STABLE_SNAP_FILE
     export EDGEX_LATEST_SNAP_FILE
 }
 
@@ -96,7 +101,7 @@ if [[ -n $LOCAL_SNAP ]]; then
         exit 1
     fi
 else 
-    REVISION_TO_TEST=$(snap_download_and_ack edgexfoundry --channel=latest/beta)
+    REVISION_TO_TEST=$(snap_download_and_ack edgexfoundry --channel=$EDGEX_LATEST_CHANNEL)
     REVISION_TO_TEST_CHANNEL=""
     REVISION_TO_TEST_CONFINEMENT=""
 fi
@@ -112,9 +117,13 @@ snap_remove 2>/dev/null > /dev/null
 set +e
 if [ -n "$SINGLE_TEST" ]; then
     printf "running single test: %s ..." "$SINGLE_TEST"
+    if [ "$SINGLE_TEST" == "test-refresh-services.sh" ]; then
+        snap_download_stable_and_latest
+    fi
 
-    if [ "$SINGLE_TEST" == "test-refresh-config-paths.sh" ] ||
-       [ "$SINGLE_TEST" == "test-refresh-services.sh" ]; then
+    if [ "$SINGLE_TEST" == "test-refresh-config-paths.sh" ]; then
+        EDGEX_IRELAND_SNAP_FILE=$(snap_download_and_ack edgexfoundry --channel=2.0/stable)
+        export EDGEX_IRELAND_SNAP_FILE
         snap_download_stable_and_latest
     fi
 
