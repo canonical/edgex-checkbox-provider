@@ -106,7 +106,7 @@ if [[ $code != 200 ]]; then
 fi
 
 
-echo "Install edgexa if missing"
+echo "Installing edgeca if missing"
 if [ -z "$(snap list edgeca)" ]; then
     snap install edgeca
     edgeca_is_installed=true
