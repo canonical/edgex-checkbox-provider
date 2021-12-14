@@ -68,6 +68,29 @@ For example, to run a single test with a local snap:
 sudo ./run-all-tests-locally.sh -s edgexfoundry.snap -t test-rules-engine.sh
 ```
 
+### Run test scripts using checkbox snap
+
+Get the checkbox-edgexfoundry snap and unsquash it:
+
+```
+snap download checkbox-edgexfoundry --edge
+unsquashfs checkbox-edgexfoundry_99.snap 
+```
+
+Update the test you are working on in `./squashfs-root/providers/checkbox-provider-edgex/data/`.
+
+Optionally, to save time, modify jakarta.pxu to remove all tests other than the one you are testing.
+
+Once done, run the tests with:
+
+```
+mksquashfs ./squashfs-root checkbox-edgexfoundry.snap  -noappend -comp xz -all-root -no-xattrs -no-fragments
+sudo snap install ./checkbox-edgexfoundry.snap --devmode
+snap connect checkbox-edgexfoundry:checkbox-runtime checkbox16:checkbox-runtime
+sudo DEFAULT_TEST_CHANNEL="2.1/beta" checkbox-edgexfoundry.jakarta
+```
+
+
 ## Testing coverage
 - Test the installation of edgexfoundry snap
 - Test security services proxy certs work properly
