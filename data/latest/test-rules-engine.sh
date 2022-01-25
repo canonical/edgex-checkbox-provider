@@ -79,7 +79,7 @@ if [ -z "$(edgexfoundry.kuiper-cli create stream stream1 '()WITH(FORMAT="JSON",T
 fi
 
 # create a rule with action: log
-if [ -z "$(edgexfoundry.kuiper-cli create rule rule_log '
+create_rule_log=$(edgexfoundry.kuiper-cli create rule rule_log '
 {
    "sql":"SELECT * from stream1",
    "actions":[
@@ -89,7 +89,9 @@ if [ -z "$(edgexfoundry.kuiper-cli create rule rule_log '
          }
       }
    ]
-}' | grep '\bRule rule_log was created successfully\b')" ] ; then
+}' | grep '\bRule rule_log was created successfully\b')
+
+if [ -z "$create_rule_log" ] ; then
     echo "cannot create kuiper rule (action: log)"
     snap_remove
     exit 1
@@ -103,7 +105,7 @@ if [ -z "$(lsof -i -P -n -S 2 | grep 1883)" ]; then
 fi
 
 # create a rule with action: mqtt
-if [ -z "$(edgexfoundry.kuiper-cli create rule rule_mqtt '
+create_rule_mqtt=$(edgexfoundry.kuiper-cli create rule rule_mqtt '
 {
    "sql":"SELECT * from stream1",
    "actions":[
@@ -116,14 +118,16 @@ if [ -z "$(edgexfoundry.kuiper-cli create rule rule_mqtt '
          }
       }
    ]
-}' | grep '\bRule rule_mqtt was created successfully\b')" ] ; then
+}' | grep '\bRule rule_mqtt was created successfully\b')
+
+if [ -z "$create_rule_mqtt" ] ; then
     echo "cannot create kuiper rule (action: mqtt)"
     snap_remove
     exit 1
 fi
 
 # create a rule with action: rule_edgex_message_bus
-if [ -z "$(edgexfoundry.kuiper-cli create rule rule_edgex_message_bus '
+create_rule_edgex_message_bus=$(edgexfoundry.kuiper-cli create rule rule_edgex_message_bus '
 {
    "sql":"SELECT * from stream1",
    "actions": [
@@ -136,7 +140,9 @@ if [ -z "$(edgexfoundry.kuiper-cli create rule rule_edgex_message_bus '
          }
       }
    ]
-}' | grep '\bRule rule_edgex_message_bus was created successfully\b')" ] ; then
+}' | grep '\bRule rule_edgex_message_bus was created successfully\b')
+
+if [ -z "$create_rule_edgex_message_bus" ] ; then
     echo "cannot create kuiper rule (action: edgex message bus)"
     exit 1
 fi
