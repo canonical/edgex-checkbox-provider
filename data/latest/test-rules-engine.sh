@@ -31,6 +31,27 @@ fi
 # wait for services to come online
 snap_wait_all_services_online
 
+# enable device-virtual, as it's disabled by default
+snap set edgexfoundry device-virtual=on
+
+i=0
+reading_count=0
+
+while [ "$reading_count" -eq 0 ] ; 
+do
+    ((i=i+1))
+    echo "waiting for device-virtual produce readings, current retry count: $i/60"
+    sleep 1
+    #max retry avoids forever waiting
+    if [ "$i" -ge 60 ]; then
+        echo "waiting for device-virtual produce readings, reached maximum retry count of 60"
+        snap_remove
+        exit 1
+    fi
+    reading_count=$(curl -s -X 'GET'   'http://localhost:59880/api/v2/reading/count' | jq -r '.Count')
+done
+echo "device-virtual is producing readings now"
+
 # enable kuiper/rules engine, as it's disabled by default
 snap set edgexfoundry kuiper=on
 snap_wait_port_status 59720 open
@@ -101,6 +122,25 @@ if [ -z "$(edgexfoundry.kuiper-cli create rule rule2 '
     exit 1
 fi
 
+# create a rule with action: rule_edgex_message_bus
+if [ -z "$(edgexfoundry.kuiper-cli create rule rule_edgex_message_bus '
+{
+   "sql":"SELECT * from stream1",
+   "actions": [
+      {
+         "edgex": {
+            "connectionSelector": "edgex.redisMsgBus",
+            "topicPrefix": "edgex/events/device", 
+            "messageType": "request",
+            "deviceName": "device-test"
+         }
+      }
+   ]
+}' | grep '\bRule rule_edgex_message_bus was created successfully\b')" ] ; then
+    echo "cannot create kuiper rule (action: edgex message bus)"
+    exit 1
+fi
+
 # get rule's status to check if rule (action: log) works
 if [ -n "$(edgexfoundry.kuiper-cli getstatus rule rule1 | grep '\bStopped: canceled manually or by error\b')" ] ; then
     echo "cannot run rule's action - log"
@@ -111,6 +151,29 @@ fi
 # get rule's status to check if rule (action: mqtt) works
 if [ -n "$(edgexfoundry.kuiper-cli getstatus rule rule2 | grep '\bStopped: canceled manually or by error\b')" ] ; then
     echo "cannot run rule's action - mqtt"
+    snap_remove
+    exit 1
+fi
+
+
+i=0
+while [ -n "$(edgexfoundry.kuiper-cli getstatus rule rule_edgex_message_bus| grep '"source_stream1_0_records_in_total": 0')" ] ; 
+do
+    ((i=i+1))
+    echo "waiting for readings come into stream, current retry count: $i/60"
+    sleep 1
+    #max retry avoids forever waiting
+    if [ "$i" -ge 60 ]; then
+        echo "waiting for readings come into stream reached maximum retry count of 60"
+        snap_remove
+        exit 1
+    fi
+done
+echo "readings come into stream now"
+
+if [ -n "$(edgexfoundry.kuiper-cli getstatus rule rule_edgex_message_bus| grep '\bStopped: canceled manually or by error\b')" ] ||
+   [ -n "$(edgexfoundry.kuiper-cli getstatus rule rule_edgex_message_bus| grep '"sink_edgex_0_0_records_out_total": 0')" ] ; then
+    echo "cannot run rule's action: rule_edgex_message_bus"
     snap_remove
     exit 1
 fi
