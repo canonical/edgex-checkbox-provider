@@ -154,3 +154,8 @@ print_snap_version()
     snap list $snap_name | sed -n 2p
 }
 
+print_error_logs()
+{
+    echo "Error logs:"
+    journalctl --since "$START_TIME" --no-pager -o cat | grep "edgexfoundry" | grep -E "error|ERROR"
+}
