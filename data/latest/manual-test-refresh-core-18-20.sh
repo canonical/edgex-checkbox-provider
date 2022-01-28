@@ -33,7 +33,7 @@ This test verifies the correct migration of postgres from v10 to v12
 
 2) To run this test, you need to change snapcraft.yaml to epoch:5, rebuild and run this test manually with the modified snap
     cd data/latest
-    sudo ./run-all-tests-locally.sh -t manual-test-refresh-core-18-20.sh -s edgexfoundry_2.2.0-dev.13_amd64.snap 
+    sudo ./run-all-tests-locally.sh -t manual-test-refresh-core-18-20.sh -s edgexfoundry_2.2.0-dev.13_amd64.snap
 
 '
 
@@ -65,8 +65,8 @@ if [ -n "$REVISION_TO_TEST" ]; then
     echo "Installing snap from locally cached version"
     snap_install "$REVISION_TO_TEST" "$REVISION_TO_TEST_CHANNEL" "$REVISION_TO_TEST_CONFINEMENT"
 else
-    echo "Installing snap from channel"
-    snap_install edgexfoundry "$DEFAULT_TEST_CHANNEL" 
+    echo "Installing snap from channel $DEFAULT_TEST_CHANNEL"
+    snap_refresh edgexfoundry "$DEFAULT_TEST_CHANNEL"
 fi
  
 # confirm that we can log in using the public key 
