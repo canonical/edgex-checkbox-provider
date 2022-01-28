@@ -72,7 +72,7 @@ if [ -n "$(snap services edgexfoundry.app-service-configurable | grep edgexfound
 fi
 
 # create a stream
-if [ -z "$(edgexfoundry.kuiper-cli create stream stream1 '()WITH(FORMAT="JSON",TYPE="edgex")' | grep '\bStream stream1 is created\b')" ] ; then
+if [ -z "$(edgexfoundry.kuiper-cli create stream stream1 '()WITH(FORMAT="JSON",TYPE="edgex",SHARED="true")' | grep '\bStream stream1 is created\b')" ] ; then
     echo "cannot create kuiper stream"
     snap_remove
     exit 1
