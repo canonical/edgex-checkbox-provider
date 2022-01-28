@@ -17,6 +17,7 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
 # shellcheck source=/dev/null
 source "$SCRIPT_DIR/utils.sh"
 
+START_TIME=$(date +"%Y-%m-%d %H:%M:%S")
 DEFAULT_TEST_CHANNEL=${DEFAULT_TEST_CHANNEL:-beta}
 
 snap_remove
@@ -44,6 +45,7 @@ do
     sleep 1
     #max retry avoids forever waiting
     if [ "$i" -ge 60 ]; then
+        journalctl --since "$START_TIME" --no-pager | grep "edgexfoundry" | grep -E "error|ERROR"
         echo "waiting for device-virtual produce readings, reached maximum retry count of 60"
         snap_remove
         exit 1
@@ -52,6 +54,8 @@ do
 done
 echo "device-virtual is producing readings now"
 
+# change kuiper's log level to DEBUG, before the first start
+sed -i -e 's@debug\: false@debug\: true@' /var/snap/edgexfoundry/current/kuiper/etc/kuiper.yaml
 # enable kuiper/rules engine, as it's disabled by default
 snap set edgexfoundry kuiper=on
 snap_wait_port_status 59720 open
@@ -59,6 +63,7 @@ snap_wait_port_status 59720 open
 
 # make sure that kuiper/rules engine is started
 if [ -n "$(snap services edgexfoundry.kuiper | grep edgexfoundry.kuiper | grep inactive)" ] ; then
+    journalctl --since "$START_TIME" --no-pager | grep "edgexfoundry" | grep -E "error|ERROR"
     echo "kuiper is not running"
     snap_remove
     exit 1
@@ -66,19 +71,26 @@ fi
 
 # make sure that app-service-configurable is started as well
 if [ -n "$(snap services edgexfoundry.app-service-configurable | grep edgexfoundry.app-service-configurable | grep inactive)" ] ; then
+    journalctl --since "$START_TIME" --no-pager | grep "edgexfoundry" | grep -E "error|ERROR"
     echo "app-service-configurable is not running"
     snap_remove
     exit 1
 fi
 
 # create a stream
+# setting SHARED="true" in rules is currently necessary to avoid a number of issues in Kuiper 
+# that look like race conditions (e.g. incomplete JSON payload, slice bounds out of range).
+# We are investigating further and would create an issue once we have more information.
 if [ -z "$(edgexfoundry.kuiper-cli create stream stream1 '()WITH(FORMAT="JSON",TYPE="edgex",SHARED="true")' | grep '\bStream stream1 is created\b')" ] ; then
+    journalctl --since "$START_TIME" --no-pager | grep "edgexfoundry" | grep -E "error|ERROR"
     echo "cannot create kuiper stream"
     snap_remove
     exit 1
+else
+    echo "create kuiper stream successfully"
 fi
 
-# create a rule with action: log
+# create rule_log
 create_rule_log=$(edgexfoundry.kuiper-cli create rule rule_log '
 {
    "sql":"SELECT * from stream1",
@@ -92,9 +104,13 @@ create_rule_log=$(edgexfoundry.kuiper-cli create rule rule_log '
 }' | grep '\bRule rule_log was created successfully\b')
 
 if [ -z "$create_rule_log" ] ; then
-    echo "cannot create kuiper rule (action: log)"
+    >&2 echo $create_rule_log 
+    journalctl --since "$START_TIME" --no-pager | grep "edgexfoundry" | grep -E "error|ERROR"
+    echo "cannot create kuiper rule_log)"
     snap_remove
     exit 1
+else
+    echo "create rule_log sucessfully"
 fi
 
 # if mqtt broker not exit, then install it
@@ -104,7 +120,7 @@ if [ -z "$(lsof -i -P -n -S 2 | grep 1883)" ]; then
     echo "mosquitto installed"
 fi
 
-# create a rule with action: mqtt
+# create rule_mqtt
 create_rule_mqtt=$(edgexfoundry.kuiper-cli create rule rule_mqtt '
 {
    "sql":"SELECT * from stream1",
@@ -121,12 +137,16 @@ create_rule_mqtt=$(edgexfoundry.kuiper-cli create rule rule_mqtt '
 }' | grep '\bRule rule_mqtt was created successfully\b')
 
 if [ -z "$create_rule_mqtt" ] ; then
-    echo "cannot create kuiper rule (action: mqtt)"
+    >&2 echo $create_rule_mqtt 
+    journalctl --since "$START_TIME" --no-pager | grep "edgexfoundry" | grep -E "error|ERROR"
+    echo "cannot create kuiper rule_mqtt"
     snap_remove
     exit 1
+else
+    echo "create rule_mqtt) sucessfully"
 fi
 
-# create a rule with action: rule_edgex_message_bus
+# create rule_edgex_message_bus
 create_rule_edgex_message_bus=$(edgexfoundry.kuiper-cli create rule rule_edgex_message_bus '
 {
    "sql":"SELECT * from stream1",
@@ -143,24 +163,36 @@ create_rule_edgex_message_bus=$(edgexfoundry.kuiper-cli create rule rule_edgex_m
 }' | grep '\bRule rule_edgex_message_bus was created successfully\b')
 
 if [ -z "$create_rule_edgex_message_bus" ] ; then
-    echo "cannot create kuiper rule (action: edgex message bus)"
+    >&2 echo $create_rule_edgex_message_bus    
+    journalctl --since "$START_TIME" --no-pager | grep "edgexfoundry" | grep -E "error|ERROR"
+    echo "cannot create kuiper rule_edgex_message_bus)"
+    snap_remove
     exit 1
+else
+    echo "create rule_edgex_message_bus) sucessfully"
 fi
 
-# get rule's status to check if rule (action: log) works
+# get rule's status to check if rule_log works
 if [ -n "$(edgexfoundry.kuiper-cli getstatus rule rule_log | grep '\bStopped: canceled manually or by error\b')" ] ; then
-    echo "cannot run rule's action: log"
+    >&2 echo $(edgexfoundry.kuiper-cli getstatus rule rule_log)
+    journalctl --since "$START_TIME" --no-pager | grep "edgexfoundry" | grep -E "error|ERROR"
+    echo "cannot run rule_log"
     snap_remove
     exit 1
+else
+    echo "run rule_log sucessfully"
 fi
 
-# get rule's status to check if rule (action: mqtt) works
+# get rule's status to check if rule_mqtt works
 if [ -n "$(edgexfoundry.kuiper-cli getstatus rule rule_mqtt | grep '\bStopped: canceled manually or by error\b')" ] ; then
-    echo "cannot run rule's action: mqtt"
+    >&2 echo $(edgexfoundry.kuiper-cli getstatus rule rule_mqtt)
+    journalctl --since "$START_TIME" --no-pager | grep "edgexfoundry" | grep -E "error|ERROR"
+    echo "cannot run rule_mqtt"
     snap_remove
     exit 1
+else
+    echo "run rule_mqtt sucessfully"
 fi
-
 
 i=0
 while [ -n "$(edgexfoundry.kuiper-cli getstatus rule rule_edgex_message_bus| grep '"source_stream1_0_records_in_total": 0')" ] ; 
@@ -170,6 +202,7 @@ do
     sleep 1
     #max retry avoids forever waiting
     if [ "$i" -ge 60 ]; then
+        journalctl --since "$START_TIME" --no-pager | grep "edgexfoundry" | grep -E "error|ERROR"
         echo "waiting for readings come into stream reached maximum retry count of 60"
         snap_remove
         exit 1
@@ -179,32 +212,53 @@ echo "readings come into stream now"
 
 if [ -n "$(edgexfoundry.kuiper-cli getstatus rule rule_edgex_message_bus| grep '\bStopped: canceled manually or by error\b')" ] ||
    [ -n "$(edgexfoundry.kuiper-cli getstatus rule rule_edgex_message_bus| grep '"sink_edgex_0_0_records_out_total": 0')" ] ; then
-    echo "cannot run rule's action: rule_edgex_message_bus"
+    echo "rule_edgex_message_bus status:"
+    >&2 echo $(edgexfoundry.kuiper-cli getstatus rule rule_edgex_message_bus)
+    journalctl --since "$START_TIME" --no-pager | grep "edgexfoundry" | grep -E "error|ERROR"
+    echo "cannot run rule_edgex_message_bus"
     snap_remove
     exit 1
+else
+    echo "run rule_edgex_message_bus sucessfully"
 fi
 
 # stop a rule
 if [ -z "$(edgexfoundry.kuiper-cli stop rule rule_log | grep '\bRule rule_log was stopped\b')" ] || 
    [ -z "$(edgexfoundry.kuiper-cli stop rule rule_mqtt | grep '\bRule rule_mqtt was stopped\b')" ] ; then
+    >&2 echo $(edgexfoundry.kuiper-cli stop rule rule_log)
+    >&2 echo $(edgexfoundry.kuiper-cli stop rule rule_mqtt)
+    journalctl --since "$START_TIME" --no-pager | grep "edgexfoundry" | grep -E "error|ERROR"
     echo "cannot stop rule"
     snap_remove
     exit 1
+else
+    echo "stop rule_log sucessfully"
+    echo "stop rule_mqtt sucessfully"
 fi
 
 # drop a rule
 if [ -z "$(edgexfoundry.kuiper-cli drop rule rule_log | grep '\bRule rule_log is dropped\b')" ] || 
    [ -z "$(edgexfoundry.kuiper-cli drop rule rule_mqtt | grep '\bRule rule_mqtt is dropped\b')" ] ; then
+    >&2 echo $(edgexfoundry.kuiper-cli drop rule rule_log)
+    >&2 echo $(edgexfoundry.kuiper-cli drop rule rule_mqtt)
+    journalctl --since "$START_TIME" --no-pager | grep "edgexfoundry" | grep -E "error|ERROR"
     echo "cannot drop rule"
     snap_remove
     exit 1
+else
+    echo "drop rule_log sucessfully"
+    echo "drop rule_mqtt sucessfully"
 fi
 
 # drop a stream
 if [ -z "$(edgexfoundry.kuiper-cli drop stream stream1 | grep '\bStream stream1 is dropped\b')" ] ; then
+    >&2 echo $(edgexfoundry.kuiper-cli drop stream stream1)
+    journalctl --since "$START_TIME" --no-pager | grep "edgexfoundry" | grep -E "error|ERROR"
     echo "cannot drop stream"
     snap_remove
     exit 1
+else
+    echo "drop stream sucessfully"
 fi
 
 # disable the kuiper for app-service-configurable
@@ -213,6 +267,7 @@ snap_wait_port_status 59720 close
 
 # check that kuiper/rules engine is no longer running 
 if [ -z "$(snap services edgexfoundry.kuiper | grep edgexfoundry.kuiper | grep inactive)" ]; then
+    journalctl --since "$START_TIME" --no-pager | grep "edgexfoundry" | grep -E "error|ERROR"
     echo "kuiper failed to stop"
     snap_remove
     exit 1
@@ -220,6 +275,7 @@ fi
 
 # check that app-service-configurable is no longer running as well
 if [ -z "$(snap services edgexfoundry.app-service-configurable | grep edgexfoundry.app-service-configurable | grep inactive)" ]; then
+    journalctl --since "$START_TIME" --no-pager | grep "edgexfoundry" | grep -E "error|ERROR"
     echo "kuiper failed to stop app-service-configurable"
     snap_remove
     exit 1
