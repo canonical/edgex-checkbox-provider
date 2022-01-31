@@ -159,5 +159,5 @@ print_snap_version()
 print_error_logs()
 {
     echo "Error logs:"
-    journalctl --since "$START_TIME" --no-pager -o cat | grep "edgexfoundry" | grep -E "error|ERROR"
+    journalctl --since "$START_TIME" --no-pager | grep "edgexfoundry" | grep --ignore-case "error" | grep --invert-match "error=-1"
 }

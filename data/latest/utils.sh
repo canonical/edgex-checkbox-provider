@@ -114,6 +114,7 @@ snap_wait_all_services_online()
         fi
 
         if [[ "$core_data_status_code" == 200 ]] \
+            && [[ "$(edgexfoundry.vault-cli status -format=json | jq -r '.initialized')" == true ]] \
             && [[ "$core_metadata_status_code" == 200 ]] \
             && [[ "$core_command_status_code" == 200 ]] \
             && snap_wait_port_status 8000 open \
