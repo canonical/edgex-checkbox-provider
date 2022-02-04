@@ -104,7 +104,7 @@ if [[ -n $LOCAL_SNAP ]]; then
     fi
 else 
     echo "testing snap from channel: $DEFAULT_TEST_CHANNEL"
-    REVISION_TO_TEST=$(snap_download_and_ack edgexfoundry --channel=$DEFAULT_TEST_CHANNEL)
+    REVISION_TO_TEST=""
     REVISION_TO_TEST_CHANNEL=""
     REVISION_TO_TEST_CONFINEMENT=""
 fi
