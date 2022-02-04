@@ -4,7 +4,8 @@ This project contains the [Checkbox](https://checkbox.readthedocs.io/en/latest/)
 
 The upstream repository is hosted on Github: https://github.com/canonical/edgex-checkbox-provider
 
-A mirror is available on Launchpad: https://code.launchpad.net/checkbox-provider-edgex
+A mirror is available on Launchpad: https://code.launchpad.net/checkbox-provider-edgex  
+The mirror and upstream are synced automatically every 5 hours. The import may be triggered manually.
 
 When a snap is released to a `$TRACK/beta` channel, the corresponding checkbox tests are triggered on [Ubuntu certified hardware](https://ubuntu.com/certified). The tests reference the mirror that is available on Launchpad.
 
@@ -13,7 +14,7 @@ When a snap is released to a `$TRACK/beta` channel, the corresponding checkbox t
 This is the recommended method as it runs all the tests in isolation.
 
 This snap is built on
-[launchpad](https://launchpad.net/~ce-certification-qa/+snap/checkbox-edgexfoundry-edge)
+[launchpad](https://launchpad.net/~ce-certification-qa/+snap/checkbox-edgexfoundry-edge) from the mirror (see above)
 and published as
 [checkbox-edgexfoundry](https://snapcraft.io/checkbox-edgexfoundry).
 
