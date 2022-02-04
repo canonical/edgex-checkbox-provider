@@ -14,8 +14,7 @@ When a snap is released to a `$TRACK/beta` channel, the corresponding checkbox t
 This is the recommended method as it runs all the tests in isolation.
 
 This snap is built on
-[launchpad](https://launchpad.net/~ce-certification-qa/+snap/checkbox-edgexfoundry-edge) from the mirror (see above)
-and published as
+[launchpad](https://launchpad.net/~ce-certification-qa/+snap/checkbox-edgexfoundry-edge) from the mirror (see above) and published as
 [checkbox-edgexfoundry](https://snapcraft.io/checkbox-edgexfoundry).
 
 The checkbox-edgexfoundry snap should be installed in [developer mode](https://snapcraft.io/docs/install-modes#heading--developer) to have full access. 
