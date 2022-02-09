@@ -45,7 +45,7 @@ UPGRADED_VERSION=$(list_snap edgexfoundry)
 # wait for services to come online
 snap_wait_all_services_online
 
-echo "Successfully upgraded from $ORIGINAL_VERSION to $UPGRADED_VERSION"
+echo -e "Successfully upgraded:\n\tfrom: $ORIGINAL_VERSION\n\tto:   $UPGRADED_VERSION"
 
 echo "Checking for files with previous snap revision $SNAP_REVISION"
 
