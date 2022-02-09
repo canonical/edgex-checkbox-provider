@@ -25,7 +25,7 @@ else
     snap_install edgexfoundry $EDGEX_PREV_STABLE_CHANNEL
 fi
 
-ORIGINAL_VERSION=$(print_snap_version edgexfoundry)
+ORIGINAL_VERSION=$(list_snap edgexfoundry)
 echo "Installed $ORIGINAL_VERSION"
 
 SNAP_REVISION=$(snap run --shell edgexfoundry.consul -c "echo \$SNAP_REVISION")
@@ -40,7 +40,7 @@ if [ -n "$REVISION_TO_TEST" ]; then
 else
     snap_refresh edgexfoundry "$DEFAULT_TEST_CHANNEL"
 fi
-UPGRADED_VERSION=$(print_snap_version edgexfoundry)
+UPGRADED_VERSION=$(list_snap edgexfoundry)
 
 # wait for services to come online
 snap_wait_all_services_online
