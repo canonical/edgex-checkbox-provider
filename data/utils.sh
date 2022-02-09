@@ -10,6 +10,7 @@ snap_install()
     local the_snap=$1
     local the_channel=$2
     local confinement=$3
+    echo "Installing $the_snap with channel $the_channel"
 
     if [ "$the_snap" = "edgexfoundry" ]; then
         if [ -n "$confinement" ]; then
@@ -31,6 +32,7 @@ snap_refresh()
     local the_snap=$1
     local the_channel=$2
     local confinement=$3
+    echo "Refreshing $the_snap with channel $the_channel"
 
     if [ "$the_snap" = "edgexfoundry" ]; then
         if [ -n "$confinement" ]; then
