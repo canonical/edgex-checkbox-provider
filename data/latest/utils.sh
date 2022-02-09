@@ -9,6 +9,10 @@ fi
 # snippet from https://stackoverflow.com/a/246128/10102404
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
 
+# default is either passed by the called or set here for the whole suite
+export DEFAULT_TEST_CHANNEL=${DEFAULT_TEST_CHANNEL:-latest/beta}
+echo "DEFAULT_TEST_CHANNEL=$DEFAULT_TEST_CHANNEL"
+
 # load the generic utils
 # shellcheck source=/dev/null
 source "$(dirname "$SCRIPT_DIR")/utils.sh"
