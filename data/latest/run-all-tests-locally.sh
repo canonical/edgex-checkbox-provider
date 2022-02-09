@@ -4,20 +4,11 @@
 # snippet from https://stackoverflow.com/a/246128/10102404
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
 
-if [ "$(id -u)" != "0" ]; then
-    echo "script must be run as root"
-    exit 1
-fi
-
-# load the latest release utils
+# load the generic utils utils
 # shellcheck source=/dev/null
-source "$SCRIPT_DIR/utils.sh"
+source "$(dirname "$SCRIPT_DIR")/utils.sh"
 
 EDGEX_STABLE_CHANNEL="2.1/stable"
-if [ -z "$DEFAULT_TEST_CHANNEL" ]; then
-    DEFAULT_TEST_CHANNEL="latest/beta"
-fi
-
 
 # helper function to download the snap, ack the assertion and return the
 # name of the file
@@ -103,8 +94,8 @@ if [[ -n $LOCAL_SNAP ]]; then
         exit 1
     fi
 else 
-    echo "testing snap from channel: $DEFAULT_TEST_CHANNEL"
-    export DEFAULT_TEST_CHANNEL
+    # default channel is handled in test suite's util script
+    echo "testing snap from default test channel"
 fi
 
 # make sure to remove the snap if it's installed before running

@@ -1,21 +1,21 @@
 #!/bin/bash -e
 
-if [ "$(id -u)" != "0" ]; then
-    echo "script must be run as root"
-    exit 1
-fi
-
 # get the directory of this script
 # snippet from https://stackoverflow.com/a/246128/10102404
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
 
-# default is either passed by the called or set here for the whole suite
-export DEFAULT_TEST_CHANNEL=${DEFAULT_TEST_CHANNEL:-latest/beta}
-echo "DEFAULT_TEST_CHANNEL=$DEFAULT_TEST_CHANNEL"
-
 # load the generic utils
 # shellcheck source=/dev/null
 source "$(dirname "$SCRIPT_DIR")/utils.sh"
+
+# if default is not given, we use beta risk level of this track
+TRACK_BETA=latest/beta
+if [ -n "$DEFAULT_TEST_CHANNEL" ]; then
+    echo "DEFAULT_TEST_CHANNEL set to $DEFAULT_TEST_CHANNEL"
+else
+    echo "DEFAULT_TEST_CHANNEL not set. Setting to $TRACK_BETA"
+    export DEFAULT_TEST_CHANNEL=$TRACK_BETA
+fi
 
 snap_check_svcs()
 {
