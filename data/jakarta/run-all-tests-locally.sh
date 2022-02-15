@@ -12,6 +12,7 @@ fi
 # load the jakarta release utils
 # shellcheck source=/dev/null
 source "$SCRIPT_DIR/utils.sh"
+EDGEX_STABLE_CHANNEL="2.0/stable"
 
 # helper function to download the snap, ack the assertion and return the
 # name of the file

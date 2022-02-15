@@ -13,6 +13,15 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
 # shellcheck source=/dev/null
 source "$(dirname "$SCRIPT_DIR")/utils.sh"
 
+# if default is not given, we use beta risk level of this track
+TRACK_BETA=2.1/beta
+if [ -n "$DEFAULT_TEST_CHANNEL" ]; then
+    echo "DEFAULT_TEST_CHANNEL set to $DEFAULT_TEST_CHANNEL"
+else
+    echo "DEFAULT_TEST_CHANNEL not set. Setting to $TRACK_BETA"
+    export DEFAULT_TEST_CHANNEL=$TRACK_BETA
+fi
+
 snap_check_svcs()
 {
     # group services by status

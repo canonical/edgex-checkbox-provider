@@ -9,7 +9,7 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
 source "$SCRIPT_DIR/utils.sh"
 
 START_TIME=$(date +"%Y-%m-%d %H:%M:%S")
-DEFAULT_TEST_CHANNEL=${DEFAULT_TEST_CHANNEL:-beta}
+EDGEX_PREV_STABLE_CHANNEL="2.0/stable"
 
 snap_remove
 
