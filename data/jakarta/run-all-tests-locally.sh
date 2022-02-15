@@ -87,25 +87,20 @@ set -- "${POSITIONAL[@]}" # restore positional parameters
 if [[ -n $LOCAL_SNAP ]]; then
     if [ -f "$LOCAL_SNAP" ]; then
         echo "testing local snap: $LOCAL_SNAP"
-        REVISION_TO_TEST=$LOCAL_SNAP
-        REVISION_TO_TEST_CHANNEL=""
+        export REVISION_TO_TEST=$LOCAL_SNAP
+        export REVISION_TO_TEST_CHANNEL=""
         # for now always need to test edgexfoundry locally with devmode
         # because we can't auto-connect interfaces that are needed
-        REVISION_TO_TEST_CONFINEMENT="--devmode"
+        export REVISION_TO_TEST_CONFINEMENT="--devmode"
     else
         echo "local snap to test: \"$LOCAL_SNAP\" does not exist"
         exit 1
     fi
 else 
-    REVISION_TO_TEST=$(snap_download_and_ack edgexfoundry --beta)
-    REVISION_TO_TEST_CHANNEL=""
-    REVISION_TO_TEST_CONFINEMENT=""
+    # default channel is handled in test suite's util script
+    echo "testing snap from default test channel"
 fi
 
-# export the revision to test env vars
-export REVISION_TO_TEST
-export REVISION_TO_TEST_CHANNEL
-export REVISION_TO_TEST_CONFINEMENT
 
 # make sure to remove the snap if it's installed before running
 snap_remove 2>/dev/null > /dev/null
