@@ -1,10 +1,5 @@
 #!/bin/bash -e
 
-if [ "$(id -u)" != "0" ]; then
-    echo "script must be run as root"
-    exit 1
-fi
-
 # get the directory of this script
 # snippet from https://stackoverflow.com/a/246128/10102404
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
