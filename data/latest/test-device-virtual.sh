@@ -72,6 +72,9 @@ while true; do
         fi
         # no readings yet, keep waiting
         sleep 2
+    elif [ $? -ne 0 ] ; then
+        echo "Error finding the device created by device-virtual"
+        exit 1
     else
         # got the device, break out
         break
