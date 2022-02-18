@@ -58,12 +58,32 @@ num_tries=0
 
 # check to see if we can find the device created by device-virtual
 while true; do
-    if ! (edgexfoundry.curl -s localhost:59881/api/v2/device/all | $JQ '.'); then
-        # not json - something's wrong
-        print_error_logs
-        echo "invalid JSON response from core-metadata"
-        exit 1
-    elif [ "$(edgexfoundry.curl -s localhost:59881/api/v2/device/all | $JQ '[.devices[] | select(.name == "Random-Boolean-Device")] | length')" -lt 1 ]; then
+    if [ "$(edgexfoundry.curl -s localhost:59881/api/v2/device/all | $JQ '[.devices[] | select(.name == "Random-Boolean-Device")] | length')" -lt 1 ]; then
+        # increment number of tries
+        num_tries=$((num_tries+1))
+        if (( num_tries > MAX_READING_TRIES )); then
+            print_error_logs
+            echo "max tries attempting to get device-virtual devices"
+            exit 1
+        fi
+        # no readings yet, keep waiting
+        sleep 2
+    elif [ $? -ne 0 ] ; then
+            print_error_logs
+            echo "Error finding the device created by device-virtual"
+            exit 1
+    else
+        # got the device, break out
+        break
+    fi
+done
+
+# reset the number of tries
+num_tries=0
+
+# check to see if we can get a reading from the Random-Boolean-Device
+while true; do
+    if [ "$(edgexfoundry.curl -s localhost:59880/api/v2/reading/device/name/Random-Boolean-Device | $JQ 'length')" -le 1 ]; then
         # increment number of tries
         num_tries=$((num_tries+1))
         if (( num_tries > MAX_READING_TRIES )); then
@@ -74,39 +94,9 @@ while true; do
         # no readings yet, keep waiting
         sleep 2
     elif [ $? -ne 0 ] ; then
-        echo "Error finding the device created by device-virtual"
-        exit 1
-    else
-        # got the device, break out
-        break
-    fi
-done
-
-# reset the number of tries
-num_tries=0
-
-if ! (edgexfoundry.curl -s localhost:59880/api/v2/reading/device/name/Random-Boolean-Device | $JQ '.'); then
-    # not json - something's wrong
-    print_error_logs
-    echo "invalid JSON response from core-data"
-    exit 1
-fi
-
-# check to see if we can get a reading from the Random-Boolean-Device
-while true; do
-    retval="$(edgexfoundry.curl -s localhost:59880/api/v2/reading/device/name/Random-Boolean-Device | $JQ 'length')"
-    echo "retval: $retval"
-
-    if [ "$retval" -le 1 ]; then
-        # increment number of tries
-        num_tries=$((num_tries+1))
-        if (( num_tries > MAX_READING_TRIES )); then
             print_error_logs
-            echo "max tries attempting to get device-virtual readings"
+            echo "Error getting a reading produced by device-virtual"
             exit 1
-        fi
-        # no readings yet, keep waiting
-        sleep 2
     else
         # got at least one reading, break out
         break
