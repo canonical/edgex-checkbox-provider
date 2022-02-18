@@ -62,7 +62,7 @@ while true; do
         print_error_logs
         echo "invalid JSON response from core-metadata"
         exit 1
-    elif [ "$(edgexfoundry.curl -s localhost:59881/api/v2/device/all | $JQ 'map(select(.name == "Random-Boolean-Device")) | length')" -lt 1 ]; then
+    elif [ "$(edgexfoundry.curl -s localhost:59881/api/v2/device/all | $JQ '[.devices[] | select(.name == "Random-Boolean-Device")] | length')" -lt 1 ]; then
         # increment number of tries
         num_tries=$((num_tries+1))
         if (( num_tries > MAX_READING_TRIES )); then
