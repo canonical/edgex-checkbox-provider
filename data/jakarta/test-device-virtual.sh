@@ -58,7 +58,15 @@ num_tries=0
 
 # check to see if we can find the device created by device-virtual
 while true; do
-    if [ "$(edgexfoundry.curl -s localhost:59881/api/v2/device/all | $JQ '[.devices[] | select(.name == "Random-Boolean-Device")] | length')" -lt 1 ]; then
+    FIND_DEVICE=$(edgexfoundry.curl -s localhost:59881/api/v2/device/all | $JQ '[.devices[] | select(.name == "Random-Boolean-Device")] | length')
+    EXIT_CODE=$?
+    if [ "$EXIT_CODE" -ne 0 ] ; then
+        print_error_logs
+        echo "Error finding the device created by device-virtual"
+        exit 1
+    fi
+    
+    if [ "$FIND_DEVICE" -lt 1 ]; then
         # increment number of tries
         num_tries=$((num_tries+1))
         if (( num_tries > MAX_READING_TRIES )); then
@@ -68,10 +76,6 @@ while true; do
         fi
         # no readings yet, keep waiting
         sleep 2
-    elif [ $? -ne 0 ] ; then
-            print_error_logs
-            echo "Error finding the device created by device-virtual"
-            exit 1
     else
         # got the device, break out
         break
@@ -83,7 +87,16 @@ num_tries=0
 
 # check to see if we can get a reading from the Random-Boolean-Device
 while true; do
-    if [ "$(edgexfoundry.curl -s localhost:59880/api/v2/reading/device/name/Random-Boolean-Device | $JQ 'length')" -le 1 ]; then
+    FIND_READING=$(edgexfoundry.curl -s localhost:59880/api/v2/reading/device/name/Random-Boolean-Device | $JQ 'length')
+    EXIT_CODE=$?
+    if [ "$EXIT_CODE" -ne 0 ] ; then
+        print_error_logs
+        echo "Error getting a reading produced by device-virtual"
+        exit 1
+    fi
+
+    if [ "$FIND_READING" -le 1 ]; then
+        EXIT_CODE=$?
         # increment number of tries
         num_tries=$((num_tries+1))
         if (( num_tries > MAX_READING_TRIES )); then
@@ -93,10 +106,6 @@ while true; do
         fi
         # no readings yet, keep waiting
         sleep 2
-    elif [ $? -ne 0 ] ; then
-            print_error_logs
-            echo "Error getting a reading produced by device-virtual"
-            exit 1
     else
         # got at least one reading, break out
         break
