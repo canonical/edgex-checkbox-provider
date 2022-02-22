@@ -126,18 +126,8 @@ else
     echo "Self-signed TLS verification recheck test succeeded"
 fi
 
-# generate CA-signed TLS certificate using openssl
 
-# Generate the Certificate Authority (CA) Private Key
-openssl ecparam -name prime256v1 -genkey -noout -out ca.key
-# Generate the Certificate Authority Certificate
-openssl req -new -x509 -sha256 -key ca.key -out ca.crt -subj "/CN=checkbox-test-ca"
-# Generate the Server Certificate Private Key
-openssl ecparam -name prime256v1 -genkey -noout -out server.key
-# Generate the Server Certificate Signing Request
-openssl req -new -sha256 -key server.key -out server.csr -subj "/CN=localhost"
-# Generate the Server Certificate
-openssl x509 -req -in server.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out server.crt -days 1000 -sha256
+openssl_generate_certificate server.crt server.key server.csr ca.crt ca.key
 
 TEST_CERT=$(< server.crt)
 TEST_KEY=$(< server.key)
@@ -152,11 +142,12 @@ echo "Copying CA certificate"
 cp ca.crt $EDGEXFOUNDRY_SNAP_DATA/
 
 echo "Checking that Kong is using new certificate"
+max_iter=10
 until [[ $(edgexfoundry.curl --silent http://localhost:8001/certificates | edgexfoundry.jq -r ".data[0].key") == $TEST_KEY ]]; do
     sleep 1
     iter_num=$(( iter_num + 1 ))
-    echo "Checking Kong TLS certificate..."
-    if [ $iter_num -gt 10 ]; then
+    echo "Checking Kong TLS certificate...$iter_num/$max_iter"
+    if [ $iter_num -gt $max_iter ]; then
         print_error_logs
         >&2 echo "Failed to set Kong TLS certificate"
         snap_remove
