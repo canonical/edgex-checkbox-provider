@@ -148,7 +148,12 @@ validate_service_env()
 {
     service="$1"
     snapFile=$(cat "/var/snap/edgexfoundry/current/config/$service/res/$service.env" | sort)
-    testFile=$(cat "${TESTFILE:-"$SNAP/providers/checkbox-provider-edgex/data/jakarta/test-files"}/$service.env" | sort)
+    if [ -n "$SNAP" ]; then
+        testFilePath="$SNAP/providers/checkbox-provider-edgex/data/latest/test-files/$service.env"
+    else
+        testFilePath="./test-files/$service.env"
+    fi
+    testFile=$(cat $testFilePath)
 
     if [ "$snapFile" != "$testFile" ]; then
 	snap_remove
