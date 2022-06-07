@@ -22,8 +22,12 @@ fi
 # wait for services to come online
 snap_wait_all_services_online
 
-# install and start edgex-device-virtual
-snap install edgex-device-virtual --channel=latest/edge
+# TODO: change channel to latest/stable when available
+# if edgex-device-virtual not exit, then install and start it
+if [ -z "$(lsof -i -P -n -S 2 | grep 59900)" ]; then
+    snap install edgex-device-virtual --channel=latest/edge
+    edgex_device_virtual__is_installed=true
+fi
 snap start edgex-device-virtual
 
 # wait for service to come online
@@ -114,6 +118,10 @@ done
 set -e
 
 # remove the snap to run the next test
-snap remove edgex-device-virtual
 snap_remove
+
+# remove the edgex-device-virtual if we installed it
+if [ "$edgex_device_virtual__is_installed" = true ] ; then
+    snap remove --purge edgex-device-virtual
+fi
 
