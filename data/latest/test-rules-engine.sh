@@ -31,12 +31,9 @@ fi
 # wait for services to come online
 snap_wait_all_services_online
 
+# install and start edgex-device-virtual
 # TODO: change channel to latest/stable when available
-# if edgex-device-virtual not exit, then install and start it
-if [ -z "$(lsof -i -P -n -S 2 | grep 59900)" ]; then
-    snap install edgex-device-virtual --channel=latest/edge
-    edgex_device_virtual__is_installed=true
-fi
+snap install edgex-device-virtual --channel=latest/edge
 snap start edgex-device-virtual
 
 i=0
@@ -283,16 +280,12 @@ if [ -z "$(snap services edgexfoundry.app-service-configurable | grep edgexfound
 fi
 
 # remove the snap to run the next test
+snap remove edgex-device-virtual
 snap_remove
 
 # remove the MQTT broker if we installed it
 if [ "$mqtt_broker_is_installed" = true ] ; then
     snap remove --purge mosquitto
     echo "mosquitto removed"
-fi
-
-# remove the edgex-device-virtual if we installed it
-if [ "$edgex_device_virtual__is_installed" = true ] ; then
-    snap remove --purge edgex-device-virtual
 fi
 
