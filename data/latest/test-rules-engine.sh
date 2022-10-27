@@ -19,13 +19,14 @@ source "$SCRIPT_DIR/utils.sh"
 
 START_TIME=$(date +"%Y-%m-%d %H:%M:%S")
 
-snap_remove
-
 snap_remove_all()
 {
     snap_remove
     snap remove edgex-device-virtual
 }
+
+snap_remove_all
+
 
 # install the snap to make sure it installs
 if [ -n "$REVISION_TO_TEST" ]; then
@@ -147,7 +148,7 @@ if [ -z "$create_rule_mqtt" ] ; then
     >&2 echo $create_rule_mqtt 
     echo "cannot create kuiper rule_mqtt"
     print_error_logs
-    snap_remove
+    snap_remove_all
     exit 1
 else
     echo "create rule_mqtt) sucessfully"
@@ -195,7 +196,7 @@ if [ -n "$(edgexfoundry.kuiper-cli getstatus rule rule_mqtt | grep '\bStopped: c
     >&2 echo $(edgexfoundry.kuiper-cli getstatus rule rule_mqtt)
     echo "cannot run rule_mqtt"
     print_error_logs
-    snap_remove
+    snap_remove_all
     exit 1
 else
     echo "run rule_mqtt sucessfully"
