@@ -148,7 +148,7 @@ if [ -z "$create_rule_mqtt" ] ; then
     >&2 echo $create_rule_mqtt 
     echo "cannot create kuiper rule_mqtt"
     print_error_logs
-    snap_remove_all
+    snap_remove
     exit 1
 else
     echo "create rule_mqtt) sucessfully"
@@ -196,7 +196,7 @@ if [ -n "$(edgexfoundry.kuiper-cli getstatus rule rule_mqtt | grep '\bStopped: c
     >&2 echo $(edgexfoundry.kuiper-cli getstatus rule rule_mqtt)
     echo "cannot run rule_mqtt"
     print_error_logs
-    snap_remove_all
+    snap_remove
     exit 1
 else
     echo "run rule_mqtt sucessfully"
