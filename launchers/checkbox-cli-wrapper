@@ -1,6 +1,3 @@
-#!/bin/bash
+#!/bin/sh
 
-. $(dirname "$(realpath $BASH_SOURCE)")/wrapper_local
-
-cd $HOME
-exec python3 $(which checkbox-cli) "$@"
+exec checkbox-cli "$@"
