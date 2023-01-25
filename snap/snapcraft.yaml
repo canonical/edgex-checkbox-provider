@@ -1,64 +1,87 @@
 name: checkbox-edgexfoundry
 summary: Checkbox tests for EdgeX Foundry
-description: "The provider is a collection of EdgeX Foundry tests to be run on Snappy devices.\n"
-version: '1.0'
+description: |
+  Collection of EdgeX Foundry tests to be run on Snappy devices.
+version: '2.0'
 grade: stable
+confinement: strict
+
+base: core20
 
 plugs:
   checkbox-runtime:
     interface: content
     target: $SNAP/checkbox-runtime
-    default-provider: checkbox16
+    default-provider: checkbox20
   provider-resource:
     interface: content
-    target: $SNAP/providers/plainbox-provider-resource
-    default-provider: checkbox16
+    target: $SNAP/providers/checkbox-provider-resource
+    default-provider: checkbox20
   provider-checkbox:
     interface: content
-    target: $SNAP/providers/plainbox-provider-checkbox
-    default-provider: checkbox16
+    target: $SNAP/providers/checkbox-provider-base
+    default-provider: checkbox20
 
 apps:
   checkbox-cli:
+    command-chain: [bin/wrapper_local]
     command: bin/checkbox-cli-wrapper
     plugs: &standard [home, network-bind, hardware-observe,
       mount-observe, network-manager, pulseaudio, serial-port,
       system-observe]
   fuji:
+    command-chain: [bin/wrapper_local]
     command: bin/fuji
     plugs: *standard
   geneva:
+    command-chain: [bin/wrapper_local]
     command: bin/geneva
     plugs: *standard
   hanoi:
+    command-chain: [bin/wrapper_local]
     command: bin/hanoi
     plugs: *standard
   ireland:
+    command-chain: [bin/wrapper_local]
     command: bin/ireland
     plugs: *standard
   jakarta:
+    command-chain: [bin/wrapper_local]
     command: bin/jakarta
     plugs: *standard
   latest:
+    command-chain: [bin/wrapper_local]
     command: bin/latest
     plugs: *standard
   test-runner:
+    command-chain: [bin/wrapper_local]
     command: bin/test-runner
     plugs: *standard
-  remote-slave:
-    command: bin/checkbox-slave
+  service:
+    command-chain: [bin/wrapper_local]
+    command: bin/checkbox-cli-wrapper service
     daemon: simple
     restart-condition: on-failure
     plugs: *standard
   shell:
+    command-chain: [bin/wrapper_local]
     command: bin/shell-wrapper
     plugs: *standard
 
 parts:
   checkbox-provider-edgex:
-    plugin: checkbox-provider
+    plugin: dump
     source: ./
     source-type: local
+    build-snaps:
+      - checkbox-provider-tools
+      - checkbox20
+    override-build: |
+      export PYTHONPATH=$SNAPCRAFT_STAGE/lib/python3.8/site-packages:$SNAPCRAFT_STAGE/usr/lib/python3/dist-packages
+      for path in $(find "/snap/checkbox20/current/providers/" -mindepth 1 -maxdepth 1 -type d); do export PROVIDERPATH=$path${PROVIDERPATH:+:$PROVIDERPATH}; done
+      checkbox-provider-tools validate
+      checkbox-provider-tools build
+      checkbox-provider-tools install --layout=relocatable --prefix=/providers/checkbox-provider-edgex --root="$SNAPCRAFT_PART_INSTALL"
     stage-packages:
       - lsof
   launchers:

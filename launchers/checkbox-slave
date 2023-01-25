@@ -1,5 +1,0 @@
-#!/bin/sh
-
-if [ "$(snapctl get slave)" = "enabled" ]; then
-  $SNAP/bin/checkbox-cli-wrapper slave
-fi
