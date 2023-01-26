@@ -1,6 +1,6 @@
-id: edgex/latest/run-all-tests-locally
-_summary: Test that the system management agent works with the snap
-command: $PLAINBOX_PROVIDER_DATA/latest/run-all-tests-locally.sh
+id: edgex/latest/run-go-tests
+_summary: Test edgexfoundry snap with Go
+command: $PLAINBOX_PROVIDER_DATA/latest/run-go-tests.sh
 user: root
 category_id: edgex
 flags: simple
