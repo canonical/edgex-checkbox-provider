@@ -22,6 +22,10 @@ plugs:
     target: $SNAP/providers/checkbox-provider-base
     default-provider: checkbox20
 
+layout:
+    /usr/share/git-core:
+      bind: $SNAP_COMMON/usr/share/git-core
+
 apps:
   checkbox-cli:
     command-chain: [bin/wrapper_local]
@@ -53,6 +57,10 @@ apps:
     command-chain: [bin/wrapper_local]
     command: bin/latest
     plugs: *standard
+    environment:
+      GIT_EXEC_PATH: $SNAP/usr/lib/git-core
+      GIT_TEMPLATE_DIR: $SNAP/usr/share/git-core/templates
+      GIT_CONFIG_NOSYSTEM: 1
   test-runner:
     command-chain: [bin/wrapper_local]
     command: bin/test-runner
@@ -78,7 +86,7 @@ parts:
       - checkbox20
     override-build: |
       export PYTHONPATH=$SNAPCRAFT_STAGE/lib/python3.8/site-packages:$SNAPCRAFT_STAGE/usr/lib/python3/dist-packages
-      for path in $(find "/snap/checkbox20/current/providers/" -mindepth 1 -maxdepth 1 -type d); do export PROVIDERPATH=$path${PROVIDERPATH:+:$PROVIDERPATH}; done
+      
       checkbox-provider-tools validate
       checkbox-provider-tools build
       checkbox-provider-tools install --layout=relocatable --prefix=/providers/checkbox-provider-edgex --root="$SNAPCRAFT_PART_INSTALL"
@@ -96,3 +104,4 @@ parts:
       stage-packages:
         - git
         - libcurl4-openssl-dev 
+      

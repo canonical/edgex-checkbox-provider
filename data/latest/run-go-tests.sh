@@ -2,14 +2,12 @@
 
 # $1 - edgex-snap-testing test suite
 
-if [ -f edgex-snap-testing ]; then
-    rm -rf edgex-snap-testing
-fi
+export PLATFORM_CHANNEL=$DEFAULT_TEST_CHANNEL
+
+rm -rf edgex-snap-testing
 
 git clone --depth 1 --branch v3 https://github.com/canonical/edgex-snap-testing.git
 cd edgex-snap-testing
-
-export PLATFORM_CHANNEL=$DEFAULT_TEST_CHANNEL
 
 go test -failfast -p 1 -timeout 30m -v ./test/suites/$1
 EXIT_CODE=$?

@@ -1,4 +1,4 @@
-id: edgex/latest/install
+id: edgex/latest/edgexfoundry
 _summary: Test edgexfoundry snap
 command: $PLAINBOX_PROVIDER_DATA/latest/run-go-tests.sh edgexfoundry
 user: root
