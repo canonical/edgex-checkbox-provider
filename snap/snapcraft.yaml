@@ -66,3 +66,7 @@ parts:
     source: launchers/
     organize:
       '*': bin/
+  edgex-snap-testing:
+    plugin: nil
+    stage-snaps:
+      - go/1.18/stable
