@@ -89,7 +89,10 @@ parts:
     source: launchers/
     organize:
       '*': bin/
-  edgex-snap-go-testing:
-    plugin: nil
-    stage-snaps:
-      - go/1.18/stable
+  testing-tools:
+      plugin: nil
+      stage-snaps:
+        - go/1.18/stable
+      stage-packages:
+        - git
+        - libcurl4-openssl-dev 

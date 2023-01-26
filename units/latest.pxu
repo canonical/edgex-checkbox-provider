@@ -1,6 +1,20 @@
-id: edgex/latest/run-go-tests
-_summary: Test edgexfoundry snap with Go
-command: $PLAINBOX_PROVIDER_DATA/latest/run-go-tests.sh
+id: edgex/latest/install
+_summary: Test edgexfoundry snap
+command: $PLAINBOX_PROVIDER_DATA/latest/run-go-tests.sh edgexfoundry
 user: root
 category_id: edgex
 flags: simple
+
+# id: edgex/latest/edgexfoundry/refresh
+# _summary: Test edgexfoundry snap refresh
+# command: $PLAINBOX_PROVIDER_DATA/latest/run-go-tests.sh edgexfoundry/refresh
+# user: root
+# category_id: edgex
+# flags: simple
+
+# id: edgex/latest/edgex-no-sec
+# _summary: Test edgexfoundry snap with disabled security together with few other EdgeX snaps
+# command: $PLAINBOX_PROVIDER_DATA/latest/run-go-tests.sh edgex-no-sec
+# user: root
+# category_id: edgex
+# flags: simple
