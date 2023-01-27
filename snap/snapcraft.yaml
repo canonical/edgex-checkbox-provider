@@ -86,7 +86,7 @@ parts:
       - checkbox20
     override-build: |
       export PYTHONPATH=$SNAPCRAFT_STAGE/lib/python3.8/site-packages:$SNAPCRAFT_STAGE/usr/lib/python3/dist-packages
-      # Comment out for now because it uses old tests to validate.
+      # Comment out for now because it uses old tests to export paths
       # See: https://github.com/canonical/checkbox/blob/8cdd92cb7b02b64d76f4fe474569abb3f0d6f561/checkbox-core-snap/series20/snap/snapcraft.yaml#L397
       # for path in $(find "/snap/checkbox20/current/providers/" -mindepth 1 -maxdepth 1 -type d); do export PROVIDERPATH=$path${PROVIDERPATH:+:$PROVIDERPATH}; done
       checkbox-provider-tools validate
@@ -104,5 +104,8 @@ parts:
       stage-packages:
         - git
         - golang-1.18-go
-        - libcurl4-openssl-dev # needed for curl in tests
+        - libcurl4-openssl-dev
+        # - curl # this uses libcurl3. adding it causes libssl errors in openssl commands
+        # - openssl
+        # - libssl-dev
       

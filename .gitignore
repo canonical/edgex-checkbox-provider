@@ -1,3 +1,5 @@
 *.snap
 *.assert
 *.pyc
+tmp
+squashfs-root
