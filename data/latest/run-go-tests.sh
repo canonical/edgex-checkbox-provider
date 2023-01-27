@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 # This scripts runs the EdgeX Snap tests maintained in
 # https://github.com/canonical/edgex-snap-testing
@@ -10,14 +10,13 @@ SUITE=$1 # name of the Go testing package
 export PLATFORM_CHANNEL=$DEFAULT_TEST_CHANNEL
 export SERVICE_CHANNEL=$DEFAULT_TEST_CHANNEL
 
-rm -rf edgex-snap-testing
+rm -r tmp
 
 git clone --config advice.detachedHead=false --depth 1 --branch v3 \
-    https://github.com/canonical/edgex-snap-testing.git
-cd edgex-snap-testing
+    https://github.com/canonical/edgex-snap-testing.git tmp/edgex-snap-testing
+cd tmp/edgex-snap-testing
 
-echo "Running Go snap tests for $SUITE:"
-go test -p 1 -timeout 30m -v ./test/suites/$SUITE
+print_logs() {
 EXIT_CODE=$?
 LOG=./test/suites/$SUITE/edgexfoundry.log
 if [ $EXIT_CODE -ne 0 ]; then
@@ -25,3 +24,10 @@ if [ $EXIT_CODE -ne 0 ]; then
     cat $LOG | grep --ignore-case "error"
     echo "=================================================="
 fi
+    exit $EXIT_CODE
+}
+trap print_logs EXIT
+
+
+echo "Running Go snap tests for $SUITE:"
+go test -p 1 -timeout 30m -v ./test/suites/$SUITE
