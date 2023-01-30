@@ -10,7 +10,7 @@ SUITE=$1 # name of the Go testing package
 export PLATFORM_CHANNEL=$DEFAULT_TEST_CHANNEL
 export SERVICE_CHANNEL=$DEFAULT_TEST_CHANNEL
 
-rm -r tmp
+rm -rf tmp
 
 git clone --config advice.detachedHead=false --depth 1 --branch v3 \
     https://github.com/canonical/edgex-snap-testing.git tmp/edgex-snap-testing
