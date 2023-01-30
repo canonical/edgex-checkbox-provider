@@ -10,6 +10,13 @@ SUITE=$1 # name of the Go testing package
 export PLATFORM_CHANNEL=$DEFAULT_TEST_CHANNEL
 export SERVICE_CHANNEL=$DEFAULT_TEST_CHANNEL
 
+# Setup the environment
+export GIT_EXEC_PATH=$SNAP/usr/lib/git-core
+export GIT_TEMPLATE_DIR=$SNAP/usr/share/git-core/templates
+export GIT_CONFIG_NOSYSTEM=1
+export PATH=$PATH:$SNAP/usr/lib/go-1.18/bin
+export CGO_ENABLED=0
+
 rm -rf tmp
 
 git clone --config advice.detachedHead=false --depth 1 --branch v3 \
