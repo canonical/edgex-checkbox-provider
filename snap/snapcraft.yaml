@@ -22,10 +22,6 @@ plugs:
     target: $SNAP/providers/checkbox-provider-base
     default-provider: checkbox20
 
-layout:
-    /usr/share/git-core:
-      bind: $SNAP_COMMON/usr/share/git-core
-
 apps:
   checkbox-cli:
     command-chain: [bin/wrapper_local]
@@ -57,10 +53,6 @@ apps:
     command-chain: [bin/wrapper_local]
     command: bin/latest
     plugs: *standard
-    environment:
-      GIT_EXEC_PATH: $SNAP/usr/lib/git-core
-      GIT_TEMPLATE_DIR: $SNAP/usr/share/git-core/templates
-      GIT_CONFIG_NOSYSTEM: 1
   test-runner:
     command-chain: [bin/wrapper_local]
     command: bin/test-runner
@@ -102,9 +94,9 @@ parts:
   testing-tools:
       plugin: nil
       stage-packages:
-        - git
-        - golang-1.18-go
-        - libcurl4-openssl-dev
+        - git # path and config set in run-go-tests.sh
+        - golang-1.18-go # PATH set in run-go-tests.sh
+        # - libcurl4-openssl-dev
         # - curl # this uses libcurl3. adding it causes libssl errors in openssl commands
         # - openssl
         # - libssl-dev
