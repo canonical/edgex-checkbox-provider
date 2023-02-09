@@ -13,7 +13,7 @@ flags: simple
 # flags: simple
 
 id: edgex/latest/edgex-no-sec
-_summary: Test edgexfoundry snap with disabled security together with few other EdgeX snaps
+_summary: Test edgexfoundry snap with disabled security
 command: $PLAINBOX_PROVIDER_DATA/latest/run-go-tests.sh edgex-no-sec
 user: root
 category_id: edgex
