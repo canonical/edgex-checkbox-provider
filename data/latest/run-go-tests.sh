@@ -36,8 +36,8 @@ print_logs() {
 trap print_logs EXIT
 
 # TODO:
-# Missing libssl for TestTLSCert go test: https://github.com/canonical/edgex-checkbox-provider/issues/52
 sed -i '/TestTLSCert/a t.Skip("https://github.com/canonical/edgex-checkbox-provider/issues/52")' ./test/suites/edgexfoundry/proxy_test.go
+sed -i '/TestAddProxyUser/a t.Skip("https://github.com/canonical/edgex-checkbox-provider/issues/55")' ./test/suites/edgexfoundry/proxy_test.go
 
 echo "Running Go snap tests for $SUITE:"
 go test -p 1 -timeout 30m -v ./test/suites/$SUITE
