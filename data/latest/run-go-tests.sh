@@ -35,6 +35,9 @@ print_logs() {
 }
 trap print_logs EXIT
 
+# Use the staged snap command available to the user
+sed -i 's/sudo snap/snap/g' ./test/utils/snap.go
+
 # TODO:
 sed -i '/TestTLSCert/a t.Skip("https://github.com/canonical/edgex-checkbox-provider/issues/52")' ./test/suites/edgexfoundry/proxy_test.go
 sed -i '/TestAddProxyUser/a t.Skip("https://github.com/canonical/edgex-checkbox-provider/issues/55")' ./test/suites/edgexfoundry/proxy_test.go

@@ -92,12 +92,12 @@ parts:
     organize:
       '*': bin/
   testing-tools:
-      plugin: nil
-      stage-packages:
-        - git # path and config set in run-go-tests.sh
-        - golang-1.18-go # PATH set in run-go-tests.sh
-        # - libcurl4-openssl-dev
-        # - curl # this uses libcurl3. adding it causes libssl errors in openssl commands
-        # - openssl
-        # - libssl-dev
-      
+    plugin: nil
+    stage-packages:
+      - git # path and config set in run-go-tests.sh
+      - golang-1.18-go # PATH set in run-go-tests.sh
+      - snapd
+      # - libcurl4-openssl-dev
+      # - curl # this uses libcurl3. adding it causes libssl errors in openssl commands
+      # - openssl
+      # - libssl-dev
