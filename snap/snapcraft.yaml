@@ -95,8 +95,11 @@ parts:
       plugin: nil
       stage-packages:
         - git # path and config set in run-go-tests.sh
-        - golang-1.18-go # PATH set in run-go-tests.sh
-        - snapd
+        - golang-1.18-go # path set in run-go-tests.sh
+        # The checkbox-edgexfoundry snap based on core20 expects the snap binary 
+        # at a path that isn't compatible with how snapd is installed on UC16.
+        # See: https://github.com/canonical/edgex-checkbox-provider/issues/59
+        - snapd # re-install the snap command
         # - libcurl4-openssl-dev
         # - curl # this uses libcurl3. adding it causes libssl errors in openssl commands
         # - openssl
