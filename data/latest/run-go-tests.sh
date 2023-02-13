@@ -35,6 +35,11 @@ print_logs() {
 }
 trap print_logs EXIT
 
+# The sudoer's path (secure_path) misses $SNAP/usr/bin/ which we need for
+# commands such as: snap, lsof. Remove all sudo commands and run everything as
+# current user:
+find test -type f -exec sed -i 's/sudo //g' {} +
+
 # TODO:
 sed -i '/TestTLSCert/a t.Skip("https://github.com/canonical/edgex-checkbox-provider/issues/52")' ./test/suites/edgexfoundry/proxy_test.go
 sed -i '/TestAddProxyUser/a t.Skip("https://github.com/canonical/edgex-checkbox-provider/issues/55")' ./test/suites/edgexfoundry/proxy_test.go
