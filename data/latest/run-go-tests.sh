@@ -6,6 +6,15 @@
 # Arguments:
 SUITE=$1 # name of the Go testing package
 
+# Default to beta risk level of this track
+TRACK_BETA=latest/beta
+if [ -n "$DEFAULT_TEST_CHANNEL" ]; then
+    echo "DEFAULT_TEST_CHANNEL set to $DEFAULT_TEST_CHANNEL"
+else
+    echo "DEFAULT_TEST_CHANNEL not set. Setting to $TRACK_BETA"
+    export DEFAULT_TEST_CHANNEL=$TRACK_BETA
+fi
+
 # Map input variables to those expected by the Go tests
 export PLATFORM_CHANNEL=$DEFAULT_TEST_CHANNEL
 export SERVICE_CHANNEL=$DEFAULT_TEST_CHANNEL
