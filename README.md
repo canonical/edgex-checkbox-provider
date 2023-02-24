@@ -15,9 +15,6 @@ Note that this doesn't provide full isolation as we need to install it in [devel
 > **Jakarta (2.1)**  
 > For the usage of tests for Jakarta and older EdgeX releases, refer to [jakarta.md](jakarta.md).
 
-The [checkbox-edgexfoundry](https://snapcraft.io/checkbox-edgexfoundry) allows the execution of tests on different platforms.
-Note that this doesn't provide full isolation as we need to install it in [developer mode](https://snapcraft.io/docs/install-modes#heading--developer) to have the necessary system access.
-
 This snap is built on
 [launchpad](https://launchpad.net/~ce-certification-qa/+snap/checkbox-edgexfoundry-edge)
 from the mirror (see above) and published as
