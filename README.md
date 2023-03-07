@@ -12,8 +12,8 @@ The [checkbox-edgexfoundry](https://snapcraft.io/checkbox-edgexfoundry) allows t
 Note that this doesn't provide full isolation as we need to install it in [developer mode](https://snapcraft.io/docs/install-modes#heading--developer) to have the necessary system access.
 
 ## Usage
-> **Jakarta (2.1)**  
-> For the usage of tests for Jakarta and older EdgeX releases, refer to [jakarta.md](jakarta.md).
+> **EdgeX 2.3 and older**  
+> For testing EdgeX 2.3 (Levski), 2.1 (Jakarta/LTS), and older, refer to the [legacy-core-base](https://github.com/canonical/edgex-checkbox-provider/tree/legacy-core-base) branch.
 
 This snap is built on
 [launchpad](https://launchpad.net/~ce-certification-qa/+snap/checkbox-edgexfoundry-edge)
