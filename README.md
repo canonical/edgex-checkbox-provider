@@ -13,7 +13,7 @@ Note that this doesn't provide full isolation as we need to install it in [devel
 
 ## Usage
 > **EdgeX 2.3 and older**  
-> For testing EdgeX 2.3 (Levski), 2.1 (Jakarta/LTS), and older, refer to the [legacy-core-base](https://github.com/canonical/edgex-checkbox-provider/tree/legacy-core-base) branch.
+> For testing EdgeX 2.3 (Levski), 2.1 (Jakarta/LTS), and older, refer to the [edgex-v2](https://github.com/canonical/edgex-checkbox-provider/tree/edgex-v2) branch.
 
 This snap is built on
 [launchpad](https://launchpad.net/~ce-certification-qa/+snap/checkbox-edgexfoundry-edge)
