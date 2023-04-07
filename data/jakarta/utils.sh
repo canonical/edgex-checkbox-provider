@@ -96,15 +96,15 @@ snap_wait_all_services_online()
         fi
 
         #dial services
-        core_data_status_code=$(curl --insecure --silent --include \
+        core_data_status_code=$(edgexfoundry.curl --insecure --silent --include \
             --connect-timeout 2 --max-time 5 \
             --output /dev/null --write-out "%{http_code}" \
             -X GET 'http://localhost:59880/api/v2/ping') || true
-        core_metadata_status_code=$(curl --insecure --silent --include \
+        core_metadata_status_code=$(edgexfoundry.curl --insecure --silent --include \
             --connect-timeout 2 --max-time 5 \
             --output /dev/null --write-out "%{http_code}" \
             -X GET 'http://localhost:59881/api/v2/ping') || true
-        core_command_status_code=$(curl --insecure --silent --include \
+        core_command_status_code=$(edgexfoundry.curl --insecure --silent --include \
             --connect-timeout 2 --max-time 5 \
             --output /dev/null --write-out "%{http_code}" \
             -X GET 'http://localhost:59882/api/v2/ping') || true

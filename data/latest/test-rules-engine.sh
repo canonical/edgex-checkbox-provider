@@ -59,7 +59,7 @@ do
         snap_remove_all
         exit 1
     fi
-    reading_count=$(curl -s -X 'GET'   'http://localhost:59880/api/v2/reading/count' | jq -r '.Count')
+    reading_count=$(edgexfoundry.curl -s -X 'GET'   'http://localhost:59880/api/v2/reading/count' | jq -r '.Count')
 done
 echo "edgex-device-virtual is producing readings now"
 
