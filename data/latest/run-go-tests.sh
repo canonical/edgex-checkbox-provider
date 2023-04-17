@@ -42,10 +42,6 @@ trap print_logs EXIT
 # current user:
 find test -type f -exec sed -i 's/sudo //g' {} +
 
-# TODO:
-sed -i '/TestTLSCert/a t.Skip("https://github.com/canonical/edgex-checkbox-provider/issues/52")' ./test/suites/edgexfoundry/proxy_test.go
-sed -i '/TestAddProxyUser/a t.Skip("https://github.com/canonical/edgex-checkbox-provider/issues/55")' ./test/suites/edgexfoundry/proxy_test.go
-
 echo -e "\nRun the '$SUITE' test suite:"
 go test -p 1 -timeout 30m -v ./test/suites/$SUITE
 
